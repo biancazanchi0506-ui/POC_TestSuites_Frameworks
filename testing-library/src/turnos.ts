@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto'
 import type { Turno, NuevoTurno } from './types'
 
 const FECHA_REGEX = /^\d{4}-\d{2}-\d{2}$/
@@ -30,7 +29,7 @@ export function hayDisponibilidad(turnos: Turno[], fecha: string, hora: string):
  */
 function validarNuevoTurno(nuevoTurno: NuevoTurno): void {
   if (!nuevoTurno.fecha || !FECHA_REGEX.test(nuevoTurno.fecha)) {
-    throw new TurnoInvalidoError('La fecha debe tener el formato YYYY-MM-DD')
+    throw new TurnoInvalidoError('La fecha debe tener el formato DD-MM-AAAA')
   }
   if (!nuevoTurno.hora || !HORA_REGEX.test(nuevoTurno.hora)) {
     throw new TurnoInvalidoError('La hora debe tener el formato HH:mm')
@@ -54,7 +53,7 @@ export function reservarTurno(
     throw new TurnoOcupadoError(nuevoTurno.fecha, nuevoTurno.hora)
   }
 
-  const turno: Turno = { id: randomUUID(), ...nuevoTurno }
+  const turno: Turno = { id: globalThis.crypto.randomUUID(), ...nuevoTurno }
   return { turnos: [...turnos, turno], turno }
 }
 
