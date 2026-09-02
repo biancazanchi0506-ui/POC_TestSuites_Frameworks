@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto'
 import type { Turno, NuevoTurno } from './types'
 
 const FECHA_REGEX = /^\d{4}-\d{2}-\d{2}$/
@@ -18,19 +17,13 @@ export class TurnoInvalidoError extends Error {
   }
 }
 
-/**
- * Chequea si un horario específico está libre en una fecha dada.
- */
 export function hayDisponibilidad(turnos: Turno[], fecha: string, hora: string): boolean {
   return !turnos.some((t) => t.fecha === fecha && t.hora === hora)
 }
 
-/**
- * Valida los datos de un nuevo turno antes de reservarlo.
- */
 function validarNuevoTurno(nuevoTurno: NuevoTurno): void {
   if (!nuevoTurno.fecha || !FECHA_REGEX.test(nuevoTurno.fecha)) {
-    throw new TurnoInvalidoError('La fecha debe tener el formato YYYY-MM-DD')
+    throw new TurnoInvalidoError('La fecha debe tener el formato DD-MM-AAAA')
   }
   if (!nuevoTurno.hora || !HORA_REGEX.test(nuevoTurno.hora)) {
     throw new TurnoInvalidoError('La hora debe tener el formato HH:mm')
@@ -40,10 +33,6 @@ function validarNuevoTurno(nuevoTurno: NuevoTurno): void {
   }
 }
 
-/**
- * Agrega un nuevo turno a la lista si el horario está libre.
- * Devuelve una NUEVA lista (no muta la original) junto con el turno creado.
- */
 export function reservarTurno(
   turnos: Turno[],
   nuevoTurno: NuevoTurno
@@ -54,21 +43,14 @@ export function reservarTurno(
     throw new TurnoOcupadoError(nuevoTurno.fecha, nuevoTurno.hora)
   }
 
-  const turno: Turno = { id: randomUUID(), ...nuevoTurno }
+  const turno: Turno = { id: globalThis.crypto.randomUUID(), ...nuevoTurno }
   return { turnos: [...turnos, turno], turno }
 }
 
-/**
- * Elimina un turno por id. Devuelve una NUEVA lista.
- * Si el id no existe, devuelve la lista sin cambios.
- */
 export function cancelarTurno(turnos: Turno[], id: string): Turno[] {
   return turnos.filter((t) => t.id !== id)
 }
 
-/**
- * Lista todos los turnos de una fecha específica.
- */
 export function listarTurnosPorFecha(turnos: Turno[], fecha: string): Turno[] {
   return turnos.filter((t) => t.fecha === fecha)
 }
