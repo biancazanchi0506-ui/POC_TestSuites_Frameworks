@@ -1,9 +1,0 @@
-/** @type {import('jest').Config} */
-export default {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testMatch: ['**/tests/**/*.test.ts'],
-  collectCoverageFrom: ['src/**/*.ts'],
-  coverageReporters: ['text', 'html'],
-};
-
